@@ -1,109 +1,46 @@
-//This file is intended to include all commonly modified settings for Open Melt
+// Configuration
+#include "SparkFun_LIS331.h"
 
-#ifndef MELTY_CONFIG_GUARD  //header guard
-#define MELTY_CONFIG_GUARD
+/* Header Guard */
+#ifndef CONFIG_HEADER_GUARD
+#define CONFIG_HEADER_GUARD
 
-#define LED_TEST 200
+/* Debug Mode */
+#define DEBUG_MODE true                 // Enable Serial
 
-//----------AVR SPECIFIC FUNCTIONALITY----------
-//This code has not been tested on ARM / non-AVR Arduinos (but may work)
-//Doesn't currently support persistent config storage for non-AVR Arduinos (see config_storage.cpp for details)
-//490Hz PWM-throttle behavior is specific to Atmega32u4 (see below)
+/* Pins */
+#define ESC_LEFT 2
+#define ESC_RIGHT 3
 
-//----------DIAGNOSTICS----------
-//#define JUST_DO_DIAGNOSTIC_LOOP                 //Disables the robot / just displays config / battery voltage / RC info via serial
+#define HEADING_LED_PIN 11
 
-//----------EEPROM----------
-#define ENABLE_EEPROM_STORAGE                     //Comment out this to disable EEPROM (for ARM)
-#define EEPROM_WRITTEN_SENTINEL_VALUE 42          //Changing this value will cause existing EEPROM values to be invalidated (revert to defaults)
+#define ACCEL_SDA 18
+#define ACCEL_SCL 19
 
-//----------TRANSLATIONAL DRIFT SETTINGS----------
-//"DEFAULT" values are overriden by interactive config / stored in EEPROM (interactive config will be easier if they are about correct)
-//To force these values to take effect after interactive config - increment EEPROM_WRITTEN_SENTINEL_VALUE
-#define DEFAULT_ACCEL_MOUNT_RADIUS_CM 2.2962        //Radius of accelerometer from center of robot
-#define DEFAULT_LED_OFFSET_PERCENT 13              //Adjust to make heading LED line up with direction robot travels 0-99 (increasing moves beacon clockwise)
-                                                   
-#define DEFAULT_ACCEL_ZERO_G_OFFSET 0.0f          //Value accelerometer returns with robot at rest (in G) - adjusts for any offset
-                                                  //H3LIS331 claims +/-1g DC offset - typical - but +/-2.5 has been observed at +/-400g setting (enough to cause tracking error)
-                                                  //Just enterring and exiting config mode will automatically set this value / save to EEPROM (based on current accel reading reflecting 0g)
-                                                  //For small-radius bots - try changing to H3LIS331 to +/-200g range for improved accuracy (accel_handler.h)
+#define RC_X_MOVE 20
+#define RC_Y_MOVE 21
+#define RC_Z_REVOLUTION 22
+#define RC_MODE 23                      // 0: Melty Brain Mode (Spinning), 1: Mecanum Mode (Not Spinning)
 
-#define LEFT_RIGHT_HEADING_CONTROL_DIVISOR 1.5f   //How quick steering is (larger values = slower)
-
-#define MIN_TRANSLATION_RPM 400                   //full power spin in below this number (increasing can reduce spin-up time)
+/* Physical Measurement */
+#define REVOLUTION_DIRECTION 1          // 1: Counterclockwise when up-side is up, -1: Clockwise when up-side is up
 
 
-//----------PIN MAPPINGS----------
-//RC pins must be Arduino interrupt pins
-//we need 3 interrupt pins - which requires an Arduino with Atmega32u4 or better (Atmega328 only support 2 interrupts)
-//Common RC receiver setup LEFTRIGHT = CH1, FORBACK = CH2, THROTTLE = CH3
-//Note: Accelerometer is connected with default Arduino SDA / SCL pins
-
-#define LEFTRIGHT_RC_CHANNEL_PIN 20                //To Left / Right on RC receiver
-#define FORBACK_RC_CHANNEL_PIN 21                  //To Forward / Back on RC receiver (Pin 1 on Arduino Micro labelled as "TX" - https://docs.arduino.cc/hacking/hardware/PinMapping32u4)
-#define THROTTLE_RC_CHANNEL_PIN 22                 //To Throttle on RC receiver (Pin 0 on Arduino Micro labelled as "RX" - https://docs.arduino.cc/hacking/hardware/PinMapping32u4)
-
-#define HEADING_LED_PIN	11                         //To heading LED (pin 13 is on-board Arduino LED)
-
-//no configuration changes are needed if only 1 motor is used!
-#define MOTOR_PIN1 2                              //Pin for Motor 1 driver
-#define MOTOR_PIN2 3                             //Pin for Motor 2 driver
-
-#define BATTERY_ADC_PIN A0                        //Pin for battery monitor (if enabled)
+/* Electronics Config */
+#define ACCEL_I2C_ADDRESS 0x19          // Adafuit breakout default is 0x18, Sparkfun default is 0x19
+#define ACCEL_RANGE LIS331::HIGH_RANGE
+#define ACCEL_MAX_SCALE 400
+/* 
+ACCEL_MAX_SCALE needs to match ACCEL_RANGE value
+    LOW_RANGE - +/-100g for the H3LIS331DH
+    MED_RANGE - +/-200g for the H3LIS331DH
+    HIGH_RANGE - +/-400g for the H3LIS331DH -> chosen
+*/
 
 
-//----------THROTTLE CONFIGURATION----------
-//THROTTLE_TYPE / High-speed PWM motor driver support:
-//Setting THROTTLE_TYPE to FIXED_PWM_THROTTLE or DYNAMIC_PWM_THROTTLE pulses 490Hz PWM signal on motor drive pins at specified duty cycle (0-255)
-//Can be used for 2 possible purposes:
-//  1. Used as control signal for a brushless ESC supporting high speed (490Hz) PWM (tested with Hobbypower 30A / "Simonk" firmware)
-//          Assumes Arduino PWM output is 490Hz (such as Arduino Micro pins 9 and 10) - should be expected NOT to work with non-AVR Arduino's without changes
-//  2. 490hz signal maybe fed into a MOSFET or other on / off motor driver to control drive strength (relatively low frequency)
-//Thanks to Richard Wong for his research in implementing brushless ESC support
+/* Calculation */
+#define RC_SD 23                        // RC Mid value signal deviation
+#define MOTOR_PULSE_LENGTH  0.5         // 0.0: 0 deg, 0.5: 90 deg, 1.0: 180 deg
 
-enum throttle_modes {
-    BINARY_THROTTLE,    //Motors pins are fully on/off - throttle controlled by portion of each rotation motor is on (no PWM)
-
-    FIXED_PWM_THROTTLE, //Motors pins are PWM at PWM_MOTOR_ON, PWM_MOTOR_COAST or PWM_MOTOR_OFF
-                        //throttle controlled by portion of each rotation motor is on
-
-    DYNAMIC_PWM_THROTTLE//Scales PWM throttling between PWM_MOTOR_COAST and PWM_MOTOR_ON
-                        //Range of throttle scaled over is determined by DYNAMIC_PWM_THROTTLE_PERCENT_MAX
-                        //PWM is locked at PWM_MOTOR_ON for throttle positions higher than DYNAMIC_PWM_THROTTLE_PERCENT_MAX
-                        //Robot speed is additionally controlled by portion of each rotation motor is on (unless DYNAMIC_PWM_MOTOR_ON_PORTION is defined)
-                        //This mode reduces current levels during spin up at part throttle
-};
-
-#define THROTTLE_TYPE DYNAMIC_PWM_THROTTLE      //<---Throttle type set here!
-
-#define DYNAMIC_PWM_MOTOR_ON_PORTION 0.5f       //if defined (and DYNAMIC_PWM_THROTTLE is set) portion of each rotation motor is on is fixed at this value
-                                                //About 0.5f for best translation (higher for increased RPM)
-
-#define DYNAMIC_PWM_THROTTLE_PERCENT_MAX 1.0f   //Range of RC throttle DYNAMIC_PWM_THROTTLE is applied to 
-                                                //0.5f for 0-50% throttle (full PWM_MOTOR_ON used for >50% throttle)
-                                                //1.0f for 0-100% throttle
-
-//----------PWM MOTOR SETTINGS---------- 
-//(only used if a PWM throttle mode is chosen)
-//PWM values are 0-255 duty cyclek
-#define PWM_MOTOR_ON 230                          //Motor PWM ON duty cycle (Simonk: 140 seems barely on / 230 seems a good near-full-throttle value)
-#define PWM_MOTOR_COAST 100                       //Motor PWM COAST duty cycle - set to same as PWM_ESC_MOTOR_OFF for fully unpowered (best translation?)
-#define PWM_MOTOR_OFF 100                         //Motor PWM OFF duty cycle (Simonk: 100 worked well in testing - if this is too low - ESC may not init)
-
-
-//----------BATTERY MONITOR----------
-#define BATTERY_ALERT_ENABLED                     //if enabled - heading LED will flicker when battery voltage is low
-#define VOLTAGE_DIVIDER 11                        //(~10:1 works well - 10kohm to GND, 100kohm to Bat+).  Resistors have tolerances!  Adjust as needed...
-#define BATTERY_ADC_WARN_VOLTAGE_THRESHOLD 7.0f  //If voltage drops below this value - then alert is triggered
-#define ARDUINIO_VOLTAGE 5.0f                     //Needed for ADC maths for battery monitor
-#define LOW_BAT_REPEAT_READS_BEFORE_ALARM 20      //Requires this many ADC reads below threshold before alarming
-
-
-//----------SAFETY----------
-//#define ENABLE_WATCHDOG                           //Uses Adafruit's sleepdog to enable watchdog / reset (tested on AVR - should work for ARM https://github.com/adafruit/Adafruit_SleepyDog)
-#define WATCH_DOG_TIMEOUT_MS 2000                 //Timeout value for watchdog (not all values are supported - 2000ms verified with Arudino Micro)
-#define VERIFY_RC_THROTTLE_ZERO_AT_BOOT           //Requires RC throttle be 0% at boot to allow spin-up for duration of MAX_MS_BETWEEN_RC_UPDATES (about 1 second)
-                                                  //Intended as safety feature to prevent bot from spinning up at power-on if RC was inadvertently left on.
-                                                  //Downside is if unexpected reboot occurs during a fight - driver will need to set throttle to zero before power 
 
 #endif
