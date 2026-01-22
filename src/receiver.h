@@ -2,24 +2,51 @@
 
 #include "config.h"
 
-void init_receiver() {
-    pinMode(RC_X_MOVE, INPUT);
-    pinMode(RC_Y_MOVE, INPUT);
-    pinMode(RC_THROTTLE, INPUT);
-    pinMode(RC_Z_REVOLUTION, INPUT);
+volatile uint32_t ch1_start, ch2_start, ch3_start, ch4_start = 0;
+
+// Variables to store PWM values
+volatile uint32_t ch1_value = 1500;
+volatile uint32_t ch2_value = 1500;
+volatile uint32_t ch3_value = 1000; // Throttle low
+volatile uint32_t ch4_value = 1500;
+
+// Interrupt functions
+void ch_changed(
+    const uint8_t pin,
+    volatile uint32_t& ch_start,
+    volatile uint32_t& ch_value
+) {
+    if (digitalRead(pin) == HIGH) {
+        ch_start = micros();
+    } else {
+        ch_value = micros() - ch_start;
+        // calculate from uint32_t to float
+    }
 }
 
-// reads accel and converts to G's
+
+void init_receiver() {
+    pinMode(CH1, INPUT);
+    pinMode(CH2, INPUT);
+    pinMode(CH3, INPUT);
+    pinMode(CH4, INPUT);
+
+    // Attach interrupts to catch rising/falling edges
+    attachInterrupt(CH1, []() {ch_changed(CH1, ch1_start, ch1_value);}, CHANGE);
+    attachInterrupt(CH2, []() {ch_changed(CH2, ch2_start, ch2_value);}, CHANGE);
+    attachInterrupt(CH3, []() {ch_changed(CH3, ch3_start, ch3_value);}, CHANGE);
+    attachInterrupt(CH4, []() {ch_changed(CH4, ch4_start, ch4_value);}, CHANGE);
+}
+
 void get_receiver(
-    volatile unsigned long& ch1,
-    volatile unsigned long& ch2,
-    volatile unsigned long& ch3,
-    volatile unsigned long& ch4
+    volatile uint32_t& ch1,
+    volatile uint32_t& ch2,
+    volatile uint32_t& ch3,
+    volatile uint32_t& ch4
 ) {
     /* Read RC */
-    ch1 = pulseIn(RC_X_MOVE, HIGH);
-    ch2 = pulseIn(RC_Y_MOVE, HIGH);
-    ch3 = pulseIn(RC_THROTTLE, HIGH);
-    ch4 = pulseIn(RC_Z_REVOLUTION, HIGH);
-    
+    ch1 = ch1_value;
+    ch2 = ch2_value;
+    ch3 = ch3_value;
+    ch4 = ch4_value;
 }
