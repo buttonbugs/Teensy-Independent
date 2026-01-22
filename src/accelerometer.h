@@ -22,13 +22,17 @@ void init_accel() {
 }
 
 // reads accel and converts to G's
-void get_accel_force_g(float& accel_x, float& accel_y, float& accel_z) {
+void get_accel(float& accel_x, float& accel_y, float& accel_z) {
     int16_t x, y, z;
+    /* Read accel */
     xl.readAxes(x, y, z);
     accel_x = (xl.convertToG(ACCEL_MAX_SCALE, x) + ACCEL_X_OFFSET) * G;
     accel_y = (xl.convertToG(ACCEL_MAX_SCALE, y) + ACCEL_Y_OFFSET) * G;
     accel_z = (xl.convertToG(ACCEL_MAX_SCALE, z) + ACCEL_Z_OFFSET) * G;
+
+    /* Read RC */
+    
 }
 
 void init_accel();
-void get_accel_force_g();
+void get_accel();

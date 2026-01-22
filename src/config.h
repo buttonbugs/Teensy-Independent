@@ -19,8 +19,8 @@
 
 #define RC_X_MOVE 20
 #define RC_Y_MOVE 21
-#define RC_Z_REVOLUTION 22
-#define RC_MODE 23                      // 0: Melty Brain Mode (Spinning), 1: Mecanum Mode (Not Spinning)
+#define RC_THROTTLE 22                  // Throttle + Mode selection -> 0: Mecanum Mode (Not Spinning), > 0: Melty Brain Mode (Spinning)
+#define RC_Z_REVOLUTION 23
 
 /* Physical Measurement */
 #define G 9.796                         // Gravitational acceleration
