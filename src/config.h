@@ -23,6 +23,7 @@
 #define RC_MODE 23                      // 0: Melty Brain Mode (Spinning), 1: Mecanum Mode (Not Spinning)
 
 /* Physical Measurement */
+#define G 9.796                         // Gravitational acceleration
 #define REVOLUTION_DIRECTION 1          // 1: Counterclockwise when up-side is up, -1: Clockwise when up-side is up
 
 
@@ -34,6 +35,7 @@
 #define ACCEL_X_OFFSET 3.810
 #define ACCEL_Y_OFFSET 3.025
 #define ACCEL_Z_OFFSET -6.255
+
 /* 
 ACCEL_MAX_SCALE needs to match ACCEL_RANGE value
     LOW_RANGE - +/-100g for the H3LIS331DH
