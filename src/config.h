@@ -30,6 +30,10 @@
 #define ACCEL_I2C_ADDRESS 0x19          // Adafuit breakout default is 0x18, Sparkfun default is 0x19
 #define ACCEL_RANGE LIS331::HIGH_RANGE
 #define ACCEL_MAX_SCALE 400
+// Real acceleration = Sensor output + Offset
+#define ACCEL_X_OFFSET 3.810
+#define ACCEL_Y_OFFSET 3.025
+#define ACCEL_Z_OFFSET -6.255
 /* 
 ACCEL_MAX_SCALE needs to match ACCEL_RANGE value
     LOW_RANGE - +/-100g for the H3LIS331DH
