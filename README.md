@@ -1,4 +1,4 @@
-The main codes are in src folder.
+The main codes are in [src](src) folder.
 
 **Board:** Teensy 4.0
 
