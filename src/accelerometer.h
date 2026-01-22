@@ -33,6 +33,3 @@ void get_accel(float& accel_x, float& accel_y, float& accel_z) {
     /* Read RC */
     
 }
-
-void init_accel();
-void get_accel();

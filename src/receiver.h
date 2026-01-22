@@ -23,6 +23,3 @@ void get_receiver(
     ch4 = pulseIn(RC_Z_REVOLUTION, HIGH);
     
 }
-
-void init_accel();
-void get_receiver();
