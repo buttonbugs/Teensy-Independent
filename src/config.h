@@ -60,4 +60,7 @@ HIGH_RANGE - +/-400g for the H3LIS331DH -> chosen
 #define MOTOR_PULSE_LENGTH  0.5f        // 0.0: 0 deg, 0.5: 90 deg, 1.0: 180 deg
 
 
+/* Watchdog */
+#define WATCH_DOG_TIMEOUT_S 20           // In seconds, must betweem 0.5 to 128. Run "wdt.feed();", or the robot will reset
+
 #endif

@@ -3,6 +3,7 @@
 #include "config.h"
 #include "accelerometer.h"              // Accelerometer
 #include "receiver.h"                   // Receiver
+#include "watchdog.h"                   // Watchdog
 
 #ifndef DEBUG_HEADER_GUARD
 #define DEBUG_HEADER_GUARD
