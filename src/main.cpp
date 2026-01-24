@@ -3,10 +3,9 @@
 #include "config.h"
 #include "accelerometer.h"              // Accelerometer
 #include "receiver.h"                   // Receiver
+#include "debug.h"
 
 bool test_led_status;
-float accel_x, accel_y, accel_z;
-volatile uint32_t ch1, ch2, ch3, ch4;      // Receiver value
 
 void setup() {
     /* Pin Definition */
@@ -15,7 +14,7 @@ void setup() {
 
     init_accel();
     init_receiver();
-    get_accel(accel_x, accel_y, accel_z);
+    get_accel();
 
     Serial.begin(9600);
     
@@ -26,16 +25,6 @@ void loop() {
     digitalWriteFast(LED_BUILTIN, test_led_status);
     test_led_status = !test_led_status;
 
-    // get_accel(accel_x, accel_y, accel_z);]
-    // Serial.print(millis()); Serial.print(" ");
-    // Serial.print(accel_x); Serial.print(" ");
-    // Serial.print(accel_y); Serial.print(" ");
-    // Serial.print(accel_z); Serial.print(" ");
-    // Serial.println(sqrtf(pow(accel_x,2.0)+pow(accel_y,2.0)+pow(accel_z,2.0)));
-    get_receiver(ch1, ch2, ch3, ch4);
-    Serial.print(ch1); Serial.print(" ");
-    Serial.print(ch2); Serial.print(" ");
-    Serial.print(ch3); Serial.print(" ");
-    Serial.print(ch4); Serial.println(" ");
+    print_info();
     delay(100);
 }

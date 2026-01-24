@@ -24,11 +24,11 @@
 
 #define RC_X_MOVE CH1
 #define RC_Y_MOVE CH2
-#define RC_THROTTLE CH3                  // Throttle + Mode selection -> 0: Mecanum Mode (Not Spinning), > 0: Melty Brain Mode (Spinning)
+#define RC_THROTTLE CH3                 // Throttle + Mode selection -> 0: Mecanum Mode (Not Spinning), > 0: Melty Brain Mode (Spinning)
 #define RC_Z_REVOLUTION CH4
 
 /* Physical Measurement */
-#define G 9.796                         // Gravitational acceleration
+#define G 9.8                           // Gravitational acceleration
 #define REVOLUTION_DIRECTION 1          // 1: Counterclockwise when up-side is up, -1: Clockwise when up-side is up
 
 
@@ -38,12 +38,13 @@
 #define ACCEL_MAX_SCALE 400
 
 // Real acceleration = Sensor output + Offset
-#define ACCEL_X_OFFSET 3.810
-#define ACCEL_Y_OFFSET 3.025
-#define ACCEL_Z_OFFSET -6.255
+#define ACCEL_X_OFFSET 0.0
+#define ACCEL_Y_OFFSET 0.0
+#define ACCEL_Z_OFFSET 0.0
 
 #define RC_MIN_PULSE_LEGNTH 1000
 #define RC_MAX_PULSE_LEGNTH 2000
+#define RC_PULSE_LEGNTH_RANGE (RC_MAX_PULSE_LEGNTH - RC_MIN_PULSE_LEGNTH)
 
 /* 
 ACCEL_MAX_SCALE needs to match ACCEL_RANGE value

@@ -2,7 +2,12 @@
 #include "SparkFun_LIS331.h"
 #include <Wire.h>
 
+/* Header Guard */
+#ifndef ACCEL_HEADER_GUARD
+#define ACCEL_HEADER_GUARD
+
 LIS331 xl;
+float accel_x, accel_y, accel_z;
 
 void init_accel() {
     Wire.begin();
@@ -22,7 +27,7 @@ void init_accel() {
 }
 
 // reads accel and converts to G's
-void get_accel(float& accel_x, float& accel_y, float& accel_z) {
+void get_accel() {
     int16_t x, y, z;
     /* Read accel */
     xl.readAxes(x, y, z);
@@ -33,3 +38,5 @@ void get_accel(float& accel_x, float& accel_y, float& accel_z) {
     /* Read RC */
     
 }
+
+#endif
