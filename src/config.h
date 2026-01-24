@@ -61,6 +61,6 @@ HIGH_RANGE - +/-400g for the H3LIS331DH -> chosen
 
 
 /* Watchdog */
-#define WATCH_DOG_TIMEOUT_S 20           // In seconds, must betweem 0.5 to 128. Run "wdt.feed();", or the robot will reset
+#define WATCH_DOG_TIMEOUT_S 2000           // In ms, must betweem 0.032 to 522.232 Run "wdt.feed();", or the robot will reset
 
 #endif
