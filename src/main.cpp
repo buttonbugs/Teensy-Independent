@@ -32,5 +32,4 @@ void loop() {
     } else {
         wdt.feed();
     }
-    
 }

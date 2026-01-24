@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "Watchdog_t4.h"
 #include "config.h"
 
@@ -11,8 +12,8 @@ void my_watchdog_callback() {
 
 void init_watchdog() {
     WDT_timings_t config;
-    config.trigger = WATCH_DOG_TIMEOUT_S; /* in seconds, 0->128 */
-    config.timeout = 10; /* in seconds, 0->128 */
+    config.trigger = 10; /* in seconds, 0->128 */
+    config.timeout = WATCH_DOG_TIMEOUT_S; /* in seconds, 0->128 */
     config.callback = my_watchdog_callback;
     Serial.print("Watchdog begin");
     Serial.println(WATCH_DOG_TIMEOUT_S);
