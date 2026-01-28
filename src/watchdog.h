@@ -18,7 +18,6 @@ void init_watchdog() {
     Serial.print("Watchdog begin");
     Serial.println(WATCH_DOG_TIMEOUT_S);
     wdt.begin(config);
-    pinMode(13, OUTPUT);
 }
 
 
