@@ -1,4 +1,8 @@
+# Teensy-Independent
+
 This repo is composed of the performance testing codes for the melty brain robot [Stuffed Crust](https://github.com/buttonbugs/Stuffed-Crust)
+
+### Details
 
 The main codes are in [src](src) folder.
 
