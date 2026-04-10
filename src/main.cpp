@@ -1,35 +1,31 @@
 #include <Arduino.h>
+#include <FastLED.h>
 
-#include "config.h"
-#include "accelerometer.h"              // Accelerometer
-#include "receiver.h"                   // Receiver
-#include "watchdog.h"                   // Watchdog
-#include "debug.h"
+#define NUM_LEDS 144         // The number of LEDs on one LED strip
+#define LED_STRIP_DATA 10
+#define LED_STRIP_SCK 8
 
-bool test_led_status;
+#define COLOR_ORDER BGR     // Check physical channel order. BGR is common for SK9822; APA102 may vary
+
+CRGB leds[NUM_LEDS];
+int color_index = 0;
+CRGB color[] = {CRGB::White, CRGB::Red, CRGB::Green, CRGB::Blue};
 
 void setup() {
-    /* Pin Definition */
-    pinMode(LED_BUILTIN, OUTPUT);
-
     Serial.begin(9600);
-
-    init_watchdog();
-    init_accel();
-    init_receiver();
-    get_accel();
+    FastLED.addLeds<SK9822, LED_STRIP_DATA, LED_STRIP_SCK, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.setBrightness(50);  // Set initial brightness (0-255)
+    delay(5000);
 }
 
 void loop() {
-    // turn the LED on (HIGH is the voltage level)
-    digitalWriteFast(LED_BUILTIN, test_led_status);
-    test_led_status = !test_led_status;
-
-    print_info();
-    delay(100);
-    if (ch1_value > 0.5) {
-        delay(21000);   // Pretend as if the robot were dead
-    } else {
-        wdt.feed();
+    for (int i = 0; i < NUM_LEDS; i++) {
+        for (int j = 0; j < NUM_LEDS; j++) {
+            leds[j] = i==j ? color[color_index] : CRGB:: Black;
+        }
+        Serial.println(i);
+        FastLED.show();
+        delay(10);
     }
+    color_index = (color_index + 1) % 4;
 }
